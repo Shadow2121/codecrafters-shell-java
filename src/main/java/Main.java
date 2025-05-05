@@ -10,23 +10,29 @@ public class Main {
             System.out.print("$ ");
             String input = scanner.nextLine();
 
-            if(input.equals("exit 0")) {
+            if(input.equalsIgnoreCase("exit 0")) {
                 break;
             }
 
-            String[] words = input.split(" ");
-            if(words[0].equalsIgnoreCase("echo")) {
-                for(int i = 1; i < words.length; i++) {
-                    System.out.print(words[i] + " ");
-                }
-                System.out.println();
-            } else {
+            processCommand(input);
+        }
+    }
 
-                System.out.println(input + ": command not found");
-            }
+    private static void processCommand(String input) {
+        String[] words = input.split("\\s+");
+        if(words[0].equalsIgnoreCase("echo")) {
+            printEcho(words);
+        } else {
+            System.out.println(input + " command not found");
+        }
+    }
 
-
+    private static void printEcho(String[] words) {
+        if (words.length == 1) {
+            System.out.println();
+            return;
         }
 
+        System.out.println(String.join(" ", words).substring(words[0].length()).trim());
     }
 }
