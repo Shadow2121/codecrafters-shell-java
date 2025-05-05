@@ -14,6 +14,13 @@ public class Main {
                 break;
             }
 
+            String[] words = input.split(" ");
+            if(words[0].equalsIgnoreCase("echo")) {
+                for(int i = 1; i < words.length; i++) {
+                    System.out.print(words[i] + " ");
+                }
+            }
+
             System.out.println(input + ": command not found");
 
         }
