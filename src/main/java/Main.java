@@ -28,7 +28,7 @@ public class Main {
             checkType(words[1].toLowerCase());
         }
         else {
-            System.out.println(input + " command not found");
+            System.out.println(input + ": command not found");
         }
     }
 
