@@ -19,6 +19,7 @@ public class Main {
                 for(int i = 1; i < words.length; i++) {
                     System.out.print(words[i] + " ");
                 }
+                System.out.println();
             } else {
 
                 System.out.println(input + ": command not found");
