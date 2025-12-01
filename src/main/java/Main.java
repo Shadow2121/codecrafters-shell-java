@@ -1,3 +1,5 @@
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -36,6 +38,25 @@ public class Main {
         if( Arrays.asList(validCommands).contains(word)) {
             System.out.println(word + " is a shell builtin");
         } else {
+            String pathVariable = System.getenv("PATH");
+
+            if (pathVariable != null) {
+                // Get the platform-specific path separator
+                String pathSeparator = System.getProperty("path.separator");
+
+                // Split the PATH string into individual folder paths
+                String[] pathFolders = pathVariable.split(pathSeparator);
+
+                for (String folder : pathFolders) {
+                    if(folder.endsWith(word)) {
+                        if(Files.isExecutable(Paths.get(folder))) {
+                            System.out.println(word + " is " + folder);
+                        }
+                    }
+                }
+            } else {
+                System.out.println("PATH environment variable not found.");
+            }
             System.out.println(word + ": not found");
         }
     }
