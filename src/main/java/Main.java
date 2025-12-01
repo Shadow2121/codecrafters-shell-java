@@ -1,7 +1,4 @@
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -27,7 +24,7 @@ public class Main {
     private static void processCommand(String input) {
         String[] words = input.split("\\s+");
         if(words[0].equalsIgnoreCase("echo")) {
-            printEcho(words[1]);
+            printEcho(words);
         } else if (words[0].equalsIgnoreCase("type")) {
             checkType(words[1].toLowerCase());
         }
@@ -65,7 +62,12 @@ public class Main {
         }
     }
 
-    private static void printEcho(String word) {
-        System.out.println(word);
+    private static void printEcho(String[] words) {
+        if (words.length == 1) {
+            System.out.println();
+            return;
+        }
+
+        System.out.println(String.join(" ", words).substring(words[0].length()).trim());
     }
 }
