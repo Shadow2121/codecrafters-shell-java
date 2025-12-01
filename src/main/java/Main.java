@@ -1,4 +1,6 @@
+import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -48,10 +50,12 @@ public class Main {
                 String[] pathFolders = pathVariable.split(pathSeparator);
 
                 for (String folder : pathFolders) {
-                    if(folder.endsWith(word)) {
-                        if(Files.isExecutable(Paths.get(folder))) {
-                            System.out.println(word + " is " + folder);
-                        }
+                    File folderFile = new File(folder);
+                    File commandFile = new File(folderFile, word);
+
+                    if(commandFile.exists() && commandFile.canExecute()) {
+                        System.out.println(word + " is " + folder);
+                        return;
                     }
                 }
             } else {
