@@ -54,7 +54,7 @@ public class Main {
                     File commandFile = new File(folderFile, word);
 
                     if(commandFile.exists() && commandFile.canExecute()) {
-                        System.out.println(word + " is " + folder);
+                        System.out.println(word + " is " + commandFile.getAbsolutePath());
                         return;
                     }
                 }
