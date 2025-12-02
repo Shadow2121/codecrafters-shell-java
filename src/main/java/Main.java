@@ -27,6 +27,8 @@ public class Main {
             printEcho(words);
         } else if (words[0].equalsIgnoreCase("type")) {
             checkType(words[1].toLowerCase());
+        } else if (words[0].equalsIgnoreCase("pwd")) {
+            printWorkingDir();
         }
         else {
             // System.out.println(input + ": command not found");
@@ -44,13 +46,15 @@ public class Main {
                 while ((line = reader.readLine()) != null) {
                     System.out.println(line);
                 }
-                // Wait for the process to complete
-                int exitCode = process.waitFor();
             } catch (Exception e) {
                 System.out.println(words[0] + ": not found");
-//                    e.printStackTrace();
             }
         }
+    }
+
+    private static void printWorkingDir() {
+        String currentDirectory = System.getProperty("user.dir");
+        System.out.println(currentDirectory);
     }
 
     private static void checkType(String word) {
