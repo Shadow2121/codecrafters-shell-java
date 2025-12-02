@@ -3,7 +3,7 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main {
-    public static String[] validCommands = {"type", "exit", "echo"};
+    public static String[] validCommands = {"type", "exit", "echo", "pwd"};
     public static void main(String[] args) throws Exception {
         // Uncomment this block to pass the first stage
 
