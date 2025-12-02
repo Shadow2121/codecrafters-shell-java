@@ -1,5 +1,4 @@
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -31,14 +30,25 @@ public class Main {
         }
         else {
             // System.out.println(input + ": command not found");
-            String path = getAbsolutePathIfValidExecutable(words[0]);
-            if(path != null) {
-                try {
-                    Process process = Runtime.getRuntime().exec(String.join(" ", words));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            try {
+                ProcessBuilder processBuilder = new ProcessBuilder(words); // For Windows
 
+                // Redirect standard output to the Java program's console
+                processBuilder.redirectErrorStream(true);
+                Process process = processBuilder.start();
+
+                // Read the output of the external program
+                InputStream inputStream = process.getInputStream();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    System.out.println(line);
+                }
+                // Wait for the process to complete
+                int exitCode = process.waitFor();
+            } catch (Exception e) {
+                System.out.println(words[0] + ": not found");
+//                    e.printStackTrace();
             }
         }
     }
