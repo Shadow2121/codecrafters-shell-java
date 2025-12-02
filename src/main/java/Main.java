@@ -1,4 +1,5 @@
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -29,7 +30,16 @@ public class Main {
             checkType(words[1].toLowerCase());
         }
         else {
-            System.out.println(input + ": command not found");
+            // System.out.println(input + ": command not found");
+            String path = getAbsolutePathIfValidExecutable(words[0]);
+            if(path != null) {
+                try {
+                    Process process = Runtime.getRuntime().exec(String.join(" ", words));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
         }
     }
 
@@ -37,29 +47,35 @@ public class Main {
         if( Arrays.asList(validCommands).contains(word)) {
             System.out.println(word + " is a shell builtin");
         } else {
-            String pathVariable = System.getenv("PATH");
-
-            if (pathVariable != null) {
-                // Get the platform-specific path separator
-                String pathSeparator = System.getProperty("path.separator");
-
-                // Split the PATH string into individual folder paths
-                String[] pathFolders = pathVariable.split(pathSeparator);
-
-                for (String folder : pathFolders) {
-                    File folderFile = new File(folder);
-                    File commandFile = new File(folderFile, word);
-
-                    if(commandFile.exists() && commandFile.canExecute()) {
-                        System.out.println(word + " is " + commandFile.getAbsolutePath());
-                        return;
-                    }
-                }
+            String path = getAbsolutePathIfValidExecutable(word);
+            if(path != null) {
+                System.out.println(word + " is " + path);
             } else {
-                System.out.println("PATH environment variable not found.");
+                System.out.println(word + ": not found");
             }
-            System.out.println(word + ": not found");
         }
+    }
+
+    private static String getAbsolutePathIfValidExecutable(String command) {
+        String pathVariable = System.getenv("PATH");
+
+        if (pathVariable != null) {
+            // Get the platform-specific path separator
+            String pathSeparator = System.getProperty("path.separator");
+
+            // Split the PATH string into individual folder paths
+            String[] pathFolders = pathVariable.split(pathSeparator);
+
+            for (String folder : pathFolders) {
+                File folderFile = new File(folder);
+                File commandFile = new File(folderFile, command);
+
+                if(commandFile.exists() && commandFile.canExecute()) {
+                    return commandFile.getAbsolutePath();
+                }
+            }
+        }
+        return null;
     }
 
     private static void printEcho(String[] words) {
