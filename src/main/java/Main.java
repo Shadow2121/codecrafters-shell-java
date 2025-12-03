@@ -29,6 +29,8 @@ public class Main {
             checkType(words[1].toLowerCase());
         } else if (words[0].equalsIgnoreCase("pwd")) {
             printWorkingDir();
+        } else if (words[0].equalsIgnoreCase("cd")) {
+            changeDir(words[1]);
         }
         else {
             // System.out.println(input + ": command not found");
@@ -99,5 +101,18 @@ public class Main {
         }
 
         System.out.println(String.join(" ", words).substring(words[0].length()).trim());
+    }
+
+    private static void changeDir(String path) {
+        if(path.equals("~")) {
+            System.setProperty("user.dir", System.getProperty("user.home"));
+        } else if(path.startsWith("/")) {
+            File folder = new File(path);
+            if(folder.exists() && folder.isDirectory()) {
+                System.setProperty("user.dir", path);
+            } else {
+                System.out.println("cd: " + path + ": No such file or directory");
+            }
+        }
     }
 }
