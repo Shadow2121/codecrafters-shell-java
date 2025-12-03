@@ -123,10 +123,9 @@ public class Main {
                 System.out.println("we are fucked!!");
             }
             if(path.startsWith("./")) path = path.replaceFirst("./", "");
-            String folderPath = folder.getAbsolutePath() + "/" + path;
-            if(folderPath.endsWith("/")) {
-                folderPath = folderPath.substring(0, folderPath.length() - 1);
-            }
+            assert folder != null;
+            String folderPath = folder.getAbsolutePath();
+            if(!path.isEmpty()) folderPath += "/" + path;
             File newDir = new File(folderPath);
             if(newDir.exists() && newDir.isDirectory()) {
                 System.setProperty("user.dir", folderPath);
