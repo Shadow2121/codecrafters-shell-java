@@ -124,6 +124,9 @@ public class Main {
             }
             if(path.startsWith("./")) path = path.replaceFirst("./", "");
             String folderPath = folder.getAbsolutePath() + "/" + path;
+            if(folderPath.endsWith("/")) {
+                folderPath = folderPath.substring(0, folderPath.length() - 1);
+            }
             File newDir = new File(folderPath);
             if(newDir.exists() && newDir.isDirectory()) {
                 System.setProperty("user.dir", folderPath);
