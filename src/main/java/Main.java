@@ -113,6 +113,23 @@ public class Main {
             } else {
                 System.out.println("cd: " + path + ": No such file or directory");
             }
+        } else {
+            File folder = new File(System.getProperty("user.dir"));
+            while(folder != null && path.startsWith("../")) {
+                folder = folder.getParentFile();
+                path = path.replaceFirst("../", "");
+            }
+            if(folder  == null ) {
+                System.out.println("we are fucked!!");
+            }
+            if(path.startsWith("./")) path = path.replaceFirst("./", "");
+            String folderPath = folder.getAbsolutePath() + "/" + path;
+            File newDir = new File(folderPath);
+            if(newDir.exists() && newDir.isDirectory()) {
+                System.setProperty("user.dir", folderPath);
+            } else {
+                System.out.println("cd: " + path + ": No such file or directory");
+            }
         }
     }
 }
