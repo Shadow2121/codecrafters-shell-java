@@ -105,7 +105,7 @@ public class Main {
 
     private static void changeDir(String path) {
         if(path.equals("~")) {
-            System.setProperty("user.dir", System.getProperty("user.home"));
+            System.setProperty("user.dir", System.getenv("HOME"));
         } else if(path.startsWith("/")) {
             File folder = new File(path);
             if(folder.exists() && folder.isDirectory()) {
