@@ -1,4 +1,5 @@
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -24,7 +25,7 @@ public class Main {
     private static void processCommand(String input) {
         String[] words = input.split("\\s+");
         if(words[0].equalsIgnoreCase("echo")) {
-            printEcho(words);
+            printEcho(input);
         } else if (words[0].equalsIgnoreCase("type")) {
             checkType(words[1].toLowerCase());
         } else if (words[0].equalsIgnoreCase("pwd")) {
@@ -94,13 +95,64 @@ public class Main {
         return null;
     }
 
-    private static void printEcho(String[] words) {
-        if (words.length == 1) {
-            System.out.println();
-            return;
+//    private static void printEcho(String[] words) {
+//        if (words.length == 1) {
+//            System.out.println();
+//            return;
+//        }
+//
+//        System.out.println(String.join(" ", words).substring(words[0].length()).trim());
+//    }
+
+    private static void printEcho(String input) {
+        input = input.substring(4).trim();
+        ArrayList<String> args = new ArrayList<>();
+        boolean isOpen = false;
+        String curr = "";
+
+        for (char ch : input.toCharArray()) {
+            if (ch == '\'') {
+                isOpen = !isOpen;
+            } else if (ch == ' ' && !isOpen) {
+                if (curr.length() > 0) args.add(curr);
+                curr = "";
+            } else {
+                curr += ch;
+            }
         }
 
-        System.out.println(String.join(" ", words).substring(words[0].length()).trim());
+        if (curr.length() > 0) {
+            args.add(curr);
+        }
+        System.out.println(String.join(" ", args));
+//        boolean isSingleQuote = false;
+//        ArrayList<String> words = new ArrayList<>();
+//        StringBuilder  word = new StringBuilder();
+//        for(char c: line.toCharArray()) {
+//            if(isSingleQuote) {
+//                if(c == '\'') {
+//                    isSingleQuote = false;
+//                    words.add(word.toString().trim());
+//                    word.setLength(0);
+//                } else word.append(c);
+//                continue;
+//            }
+//            if(c == '\'') isSingleQuote = true;
+//            else {
+//                if (c == ' ') {
+//                    if(word.isEmpty()) continue;
+//                    words.add(word.toString().trim());
+//                    word.setLength(0);
+//                } else {
+//                    word.append(c);
+//                }
+//            }
+//        }
+//        if(!word.isEmpty()) {
+//            words.add(word.toString().trim());
+//            word.setLength(0);
+//        }
+//        System.out.println(String.join("", words));
     }
 
     private static void changeDir(String path) {
