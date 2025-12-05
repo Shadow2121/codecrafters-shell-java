@@ -86,8 +86,10 @@ public class Main {
                     // Read all content of the file into a String
                     String fileContent = Files.readString(file.getAbsoluteFile().toPath());
 
+                    String singleLineContent = fileContent.replaceAll("[\\n\\r]", "");
+
                     // Print the content to the console
-                    System.out.println(fileContent);
+                    System.out.print(singleLineContent);
 
                 } catch (IOException e) {
                     // Handle potential IOException (e.g., file not found, permission issues)
@@ -96,7 +98,9 @@ public class Main {
             } else {
                 System.out.println("cd: " + words.get(i) + ": No such file or directory");
             }
+            System.out.print(" ");
         }
+        System.out.println();
     }
 
     private static void printWorkingDir() {
@@ -109,7 +113,7 @@ public class Main {
             System.out.println(word + " is a shell builtin");
         } else {
             String path = getAbsolutePathIfValidExecutable(word);
-            if(path != null) {
+            if (path != null) {
                 System.out.println(word + " is " + path);
             } else {
                 System.out.println(word + ": not found");
