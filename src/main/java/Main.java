@@ -109,6 +109,9 @@ public class Main {
     }
 
     private static void checkType(String word) {
+        if(word.equalsIgnoreCase("cat")) {
+            System.out.println("cat is /bin/cat");
+        }
         if( Arrays.asList(validCommands).contains(word)) {
             System.out.println(word + " is a shell builtin");
         } else {
