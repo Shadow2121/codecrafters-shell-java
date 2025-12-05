@@ -1,10 +1,12 @@
 import java.io.*;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main {
-    public static String[] validCommands = {"type", "exit", "echo", "pwd"};
+    public static String[] validCommands = {"type", "exit", "echo", "pwd", "cat"};
+
     public static void main(String[] args) throws Exception {
         // Uncomment this block to pass the first stage
 
@@ -24,14 +26,35 @@ public class Main {
 
     private static void processCommand(String input) {
         String[] words = input.split("\\s+");
+        ArrayList<String> args = new ArrayList<>();
+        boolean isOpen = false;
+        String curr = "";
+
+        for (char ch : input.toCharArray()) {
+            if (ch == '\'') {
+                isOpen = !isOpen;
+            } else if (ch == ' ' && !isOpen) {
+                if (!curr.isEmpty()) args.add(curr);
+                curr = "";
+            } else {
+                curr += ch;
+            }
+        }
+
+        if (!curr.isEmpty()) {
+            args.add(curr);
+        }
+
         if(words[0].equalsIgnoreCase("echo")) {
-            printEcho(input);
+            printEcho(args);
         } else if (words[0].equalsIgnoreCase("type")) {
             checkType(words[1].toLowerCase());
         } else if (words[0].equalsIgnoreCase("pwd")) {
             printWorkingDir();
         } else if (words[0].equalsIgnoreCase("cd")) {
             changeDir(words[1]);
+        } else if (words[0].equalsIgnoreCase("cat")) {
+            openFileAndPrint(args);
         }
         else {
             // System.out.println(input + ": command not found");
@@ -51,6 +74,27 @@ public class Main {
                 }
             } catch (Exception e) {
                 System.out.println(words[0] + ": not found");
+            }
+        }
+    }
+
+    private static void openFileAndPrint(ArrayList<String> words) {
+        for(int i = 1; i < words.size(); i++) {
+            File file = getAbsoluteFile(words.get(i));
+            if(file != null && file.exists() && file.isFile()) {
+                try {
+                    // Read all content of the file into a String
+                    String fileContent = Files.readString(file.getAbsoluteFile().toPath());
+
+                    // Print the content to the console
+                    System.out.println(fileContent);
+
+                } catch (IOException e) {
+                    // Handle potential IOException (e.g., file not found, permission issues)
+                    System.err.println("Error reading the file: " + e.getMessage());
+                }
+            } else {
+                System.out.println("cd: " + words.get(i) + ": No such file or directory");
             }
         }
     }
@@ -104,28 +148,9 @@ public class Main {
 //        System.out.println(String.join(" ", words).substring(words[0].length()).trim());
 //    }
 
-    private static void printEcho(String input) {
-        input = input.substring(4).trim();
-        ArrayList<String> args = new ArrayList<>();
-        boolean isOpen = false;
-        String curr = "";
+    private static void printEcho(ArrayList<String> args) {
+        System.out.println(String.join(" ", args).substring(4).trim());
 
-        for (char ch : input.toCharArray()) {
-            if (ch == '\'') {
-                isOpen = !isOpen;
-            } else if (ch == ' ' && !isOpen) {
-                if (curr.length() > 0) args.add(curr);
-                curr = "";
-            } else {
-                curr += ch;
-            }
-        }
-
-        if (curr.length() > 0) {
-            args.add(curr);
-        }
-        System.out.println(String.join(" ", args));
-        
 //        boolean isSingleQuote = false;
 //        ArrayList<String> words = new ArrayList<>();
 //        StringBuilder  word = new StringBuilder();
@@ -159,12 +184,23 @@ public class Main {
     private static void changeDir(String path) {
         if(path.equals("~")) {
             System.setProperty("user.dir", System.getenv("HOME"));
-        } else if(path.startsWith("/")) {
-            File folder = new File(path);
-            if(folder.exists() && folder.isDirectory()) {
-                System.setProperty("user.dir", path);
+        } else {
+            File folder = getAbsoluteFile(path);
+            if(folder != null && folder.isDirectory()) {
+                System.setProperty("user.dir", folder.getAbsolutePath());
             } else {
                 System.out.println("cd: " + path + ": No such file or directory");
+            }
+        }
+    }
+
+    private static File getAbsoluteFile(String path) {
+        if(path.startsWith("/")) {
+            File folder = new File(path);
+            if(folder.exists()) {
+                return folder;
+            } else {
+                return null;
             }
         } else {
             File folder = new File(System.getProperty("user.dir"));
@@ -180,10 +216,10 @@ public class Main {
             String folderPath = folder.getAbsolutePath();
             if(!path.isEmpty()) folderPath += "/" + path;
             File newDir = new File(folderPath);
-            if(newDir.exists() && newDir.isDirectory()) {
-                System.setProperty("user.dir", folderPath);
+            if(newDir.exists()) {
+                return newDir;
             } else {
-                System.out.println("cd: " + path + ": No such file or directory");
+                return null;
             }
         }
     }
