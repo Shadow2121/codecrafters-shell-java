@@ -98,9 +98,7 @@ public class Main {
             } else {
                 System.out.println("cd: " + words.get(i) + ": No such file or directory");
             }
-//            System.out.print(" ");
         }
-//        System.out.println();
     }
 
     private static void printWorkingDir() {
