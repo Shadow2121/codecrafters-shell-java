@@ -86,10 +86,10 @@ public class Main {
                     // Read all content of the file into a String
                     String fileContent = Files.readString(file.getAbsoluteFile().toPath());
 
-                    String singleLineContent = fileContent.replaceAll("[\\n\\r]", "");
+//                    String singleLineContent = fileContent.replaceAll("[\\n\\r]", "");
 
                     // Print the content to the console
-                    System.out.print(singleLineContent);
+                    System.out.print(fileContent);
 
                 } catch (IOException e) {
                     // Handle potential IOException (e.g., file not found, permission issues)
@@ -98,7 +98,7 @@ public class Main {
             } else {
                 System.out.println("cd: " + words.get(i) + ": No such file or directory");
             }
-            System.out.print(" ");
+//            System.out.print(" ");
         }
         System.out.println();
     }
