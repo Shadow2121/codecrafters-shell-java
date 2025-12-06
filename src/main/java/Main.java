@@ -33,12 +33,12 @@ public class Main {
         StringBuilder curr = new StringBuilder();
 
         for (char ch : input.toCharArray()) {
-            if(ch == '\\' && !isDoubleQuotes) {
+            if(ch == '\\' && !isDoubleQuotes && !isSingleQuotes) {
                 isBackSlash = true;
             } else if(isBackSlash) {
                 isBackSlash = false;
                 curr.append(ch);
-            }else if(ch == '"') {
+            }else if(ch == '"' && !isSingleQuotes) {
                 isDoubleQuotes = !isDoubleQuotes;
             } else if (ch == '\'' && !isDoubleQuotes) {
                 isSingleQuotes = !isSingleQuotes;
