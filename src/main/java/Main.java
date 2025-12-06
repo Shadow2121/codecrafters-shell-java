@@ -73,7 +73,7 @@ public class Main {
         else {
             // System.out.println(input + ": command not found");
             try {
-                ProcessBuilder processBuilder = new ProcessBuilder(words); // For Windows
+                ProcessBuilder processBuilder = new ProcessBuilder(args); // For Windows
 
                 // Redirect standard output to the Java program's console
                 processBuilder.redirectErrorStream(true);
@@ -87,7 +87,7 @@ public class Main {
                     System.out.println(line);
                 }
             } catch (Exception e) {
-                System.out.println(words[0] + ": not found");
+                System.out.println(args.getFirst() + ": not found");
             }
         }
     }
