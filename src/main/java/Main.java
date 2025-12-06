@@ -31,7 +31,7 @@ public class Main {
         String curr = "";
 
         for (char ch : input.toCharArray()) {
-            if (ch == '\'') {
+            if (ch == '\"') {
                 isOpen = !isOpen;
             } else if (ch == ' ' && !isOpen) {
                 if (!curr.isEmpty()) args.add(curr);
