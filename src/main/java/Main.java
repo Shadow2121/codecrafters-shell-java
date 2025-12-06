@@ -6,6 +6,7 @@ import java.util.Scanner;
 
 public class Main {
     public static String[] validCommands = {"type", "exit", "echo", "pwd", "cat"};
+    public static char[] SPECIAL_CHARS = {'"', '\\'};
 
     public static void main(String[] args) throws Exception {
         // Uncomment this block to pass the first stage
@@ -33,9 +34,12 @@ public class Main {
         StringBuilder curr = new StringBuilder();
 
         for (char ch : input.toCharArray()) {
-            if(ch == '\\' && !isDoubleQuotes && !isSingleQuotes) {
+            if(ch == '\\' && !isSingleQuotes) {
                 isBackSlash = true;
             } else if(isBackSlash) {
+                if(isDoubleQuotes && Arrays.binarySearch(SPECIAL_CHARS, ch) < 0) {
+                    curr.append("\\");
+                }
                 isBackSlash = false;
                 curr.append(ch);
             }else if(ch == '"' && !isSingleQuotes) {
