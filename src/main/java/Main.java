@@ -33,7 +33,7 @@ public class Main {
         StringBuilder curr = new StringBuilder();
 
         for (char ch : input.toCharArray()) {
-            if(ch == '\\') {
+            if(ch == '\\' && !isDoubleQuotes) {
                 isBackSlash = true;
             } else if(isBackSlash) {
                 isBackSlash = false;
