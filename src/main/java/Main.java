@@ -29,23 +29,29 @@ public class Main {
         ArrayList<String> args = new ArrayList<>();
         boolean isSingleQuotes = false;
         boolean isDoubleQuotes = false;
-        String curr = "";
+        boolean isBackSlash = false;
+        StringBuilder curr = new StringBuilder();
 
         for (char ch : input.toCharArray()) {
-            if(ch == '"') {
+            if(ch == '\\') {
+                isBackSlash = true;
+            } else if(isBackSlash) {
+                isBackSlash = false;
+                curr.append(ch);
+            }else if(ch == '"') {
                 isDoubleQuotes = !isDoubleQuotes;
             } else if (ch == '\'' && !isDoubleQuotes) {
                 isSingleQuotes = !isSingleQuotes;
             } else if (ch == ' ' && !isSingleQuotes && !isDoubleQuotes) {
-                if (!curr.isEmpty()) args.add(curr);
-                curr = "";
+                if (!curr.isEmpty()) args.add(curr.toString());
+                curr = new StringBuilder();
             } else {
-                curr += ch;
+                curr.append(ch);
             }
         }
 
         if (!curr.isEmpty()) {
-            args.add(curr);
+            args.add(curr.toString());
         }
 
         if(words[0].equalsIgnoreCase("echo")) {
