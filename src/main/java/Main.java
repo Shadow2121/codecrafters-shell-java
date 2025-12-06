@@ -27,13 +27,16 @@ public class Main {
     private static void processCommand(String input) {
         String[] words = input.split("\\s+");
         ArrayList<String> args = new ArrayList<>();
-        boolean isOpen = false;
+        boolean isSingleQuotes = false;
+        boolean isDoubleQuotes = false;
         String curr = "";
 
         for (char ch : input.toCharArray()) {
-            if (ch == '\"') {
-                isOpen = !isOpen;
-            } else if (ch == ' ' && !isOpen) {
+            if(ch == '"') {
+                isDoubleQuotes = !isDoubleQuotes;
+            } else if (ch == '\'' && !isDoubleQuotes) {
+                isSingleQuotes = !isSingleQuotes;
+            } else if (ch == ' ' && !isSingleQuotes && !isDoubleQuotes) {
                 if (!curr.isEmpty()) args.add(curr);
                 curr = "";
             } else {
