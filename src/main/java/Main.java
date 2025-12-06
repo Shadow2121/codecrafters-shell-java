@@ -53,21 +53,21 @@ public class Main {
                 curr.append(ch);
             }
         }
-        
+
 
         if (!curr.isEmpty()) {
             args.add(curr.toString());
         }
 
-        if(words[0].equalsIgnoreCase("echo")) {
+        if(args.getFirst().equalsIgnoreCase("echo")) {
             printEcho(args);
-        } else if (words[0].equalsIgnoreCase("type")) {
-            checkType(words[1].toLowerCase());
-        } else if (words[0].equalsIgnoreCase("pwd")) {
+        } else if (args.getFirst().equalsIgnoreCase("type")) {
+            checkType(args.get(1).toLowerCase());
+        } else if (args.getFirst().equalsIgnoreCase("pwd")) {
             printWorkingDir();
-        } else if (words[0].equalsIgnoreCase("cd")) {
-            changeDir(words[1]);
-        } else if (words[0].equalsIgnoreCase("cat")) {
+        } else if (args.getFirst().equalsIgnoreCase("cd")) {
+            changeDir(args.get(1));
+        } else if (args.getFirst().equalsIgnoreCase("cat")) {
             openFileAndPrint(args);
         }
         else {
