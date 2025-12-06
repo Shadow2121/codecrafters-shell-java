@@ -34,7 +34,7 @@ public class Main {
         StringBuilder curr = new StringBuilder();
 
         for (char ch : input.toCharArray()) {
-            if(ch == '\\' && !isSingleQuotes) {
+            if(ch == '\\' && !isSingleQuotes && !isBackSlash) {
                 isBackSlash = true;
             } else if(isBackSlash) {
                 if(isDoubleQuotes && Arrays.binarySearch(SPECIAL_CHARS, ch) < 0) {
