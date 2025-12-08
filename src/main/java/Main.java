@@ -160,6 +160,7 @@ public class Main {
 
     private static void checkType(String word, String filePath) {
         String output = null;
+        String error = null;
         if(word.equalsIgnoreCase("cat")) {
             output = "cat is /bin/cat";
         } else if( Arrays.asList(validCommands).contains(word)) {
@@ -169,7 +170,7 @@ public class Main {
             if (path != null) {
                 output = word + " is " + path;
             } else {
-                System.out.println(word + ": not found");
+                error = word + ": not found";
             }
         }
         if(filePath != null && output != null) {
@@ -179,8 +180,11 @@ public class Main {
             } catch (IOException e) {
                 System.err.println("An error occurred while writing to the file: " + e.getMessage());
             }
-        } else {
+        } else if(output != null) {
             System.out.println(output);
+        }
+        if(error != null) {
+            System.out.println(error);
         }
     }
 
