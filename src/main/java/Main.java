@@ -149,6 +149,7 @@ public class Main {
         if(filePath != null) {
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
                 writer.write(currentDirectory);
+                writer.newLine();
             } catch (IOException e) {
                 System.err.println("An error occurred while writing to the file: " + e.getMessage());
             }
@@ -174,6 +175,7 @@ public class Main {
         if(filePath != null && output != null) {
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
                 writer.write(output);
+                writer.newLine();
             } catch (IOException e) {
                 System.err.println("An error occurred while writing to the file: " + e.getMessage());
             }
@@ -208,6 +210,7 @@ public class Main {
         if(filePath != null) {
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
                 writer.write(String.join(" ", args).substring(4).trim());
+                writer.newLine();
             } catch (IOException e) {
                 System.err.println("An error occurred while writing to the file: " + e.getMessage());
             }
