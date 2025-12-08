@@ -139,7 +139,7 @@ public class Main {
                     System.err.println("Error reading the file: " + e.getMessage());
                 }
             } else {
-                System.out.println("cd: " + words.get(i) + ": No such file or directory");
+                System.out.println("cat: " + words.get(i) + ": No such file or directory");
             }
         }
     }
