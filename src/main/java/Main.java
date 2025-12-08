@@ -26,11 +26,13 @@ public class Main {
     }
 
     private static void processInput(String input) {
-        String[] tokens = input.split(">|1>");
-        if(tokens.length == 2) {
-            processCommand(tokens[0].trim(), tokens[1].trim());
+        String[] tokens = input.split(">");
+        if(tokens[0].endsWith("1")) {
+            processCommand(tokens[0].substring(0, tokens[0].length()-1).trim(), tokens[1].trim(), 1);
+        }else if(tokens[0].endsWith("2")) {
+            processCommand(tokens[0].substring(0, tokens[0].length()-1).trim(), tokens[1].trim(), 2);
         } else {
-            processCommand(input, null);
+            processCommand(input, null, 0);
         }
     }
 
@@ -69,26 +71,26 @@ public class Main {
         return args;
     }
 
-    private static void processCommand(String input, String filePath) {
+    private static void processCommand(String input, String filePath, int redirectNumber) {
         ArrayList<String> args = extractArgs(input);
 
         if(args.getFirst().equalsIgnoreCase("echo")) {
-            printEcho(args, filePath);
+            printEcho(args, filePath, redirectNumber);
         } else if (args.getFirst().equalsIgnoreCase("type")) {
-            checkType(args.get(1).toLowerCase(), filePath);
+            checkType(args.get(1).toLowerCase(), filePath, redirectNumber);
         } else if (args.getFirst().equalsIgnoreCase("pwd")) {
-            printWorkingDir(filePath);
+            printWorkingDir(filePath, redirectNumber);
         } else if (args.getFirst().equalsIgnoreCase("cd")) {
-            changeDir(args.get(1), filePath);
+            changeDir(args.get(1), filePath, redirectNumber);
         } else if (args.getFirst().equalsIgnoreCase("cat")) {
-            openFileAndPrint(args, filePath);
+            openFileAndPrint(args, filePath, redirectNumber);
         }
         else {
-            executeAnyCommand(args, filePath);
+            executeAnyCommand(args, filePath, redirectNumber);
         }
     }
 
-    private static void executeAnyCommand(ArrayList<String> args, String filePath) {
+    private static void executeAnyCommand(ArrayList<String> args, String filePath, int redirectNumber) {
         try {
             ProcessBuilder processBuilder = new ProcessBuilder(args); // For Windows
 
@@ -100,7 +102,7 @@ public class Main {
             InputStream inputStream = process.getInputStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
             String line;
-            if(filePath != null) {
+            if(filePath != null && redirectNumber == 1) {
                 try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
                     while ((line = reader.readLine()) != null) {
                         writer.write(line);
@@ -114,13 +116,21 @@ public class Main {
                     System.out.println(line);
                 }
             }
-
-        } catch (Exception e) {
-            System.out.println(args.getFirst() + ": not found");
+        } catch (Exception _) {
+            if(filePath != null && redirectNumber == 2) {
+                try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+                    writer.write(args.getFirst() + ": not found");
+                    writer.newLine();
+                } catch (IOException e) {
+                    System.err.println("An error occurred while writing to the file: " + e.getMessage());
+                }
+            } else {
+                System.out.println(args.getFirst() + ": not found");
+            }
         }
     }
 
-    private static void openFileAndPrint(ArrayList<String> words, String filePath) {
+    private static void openFileAndPrint(ArrayList<String> words, String filePath, int redirectNumber) {
         for(int i = 1; i < words.size(); i++) {
             File file = getAbsoluteFile(words.get(i));
             if(file != null && file.exists() && file.isFile()) {
@@ -128,7 +138,7 @@ public class Main {
                     // Read all content of the file into a String
                     String fileContent = Files.readString(file.getAbsoluteFile().toPath());
 
-                    if(filePath != null) {
+                    if(filePath != null && redirectNumber == 1) {
                         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
                             writer.write(fileContent);
                         } catch (IOException e) {
@@ -143,14 +153,23 @@ public class Main {
                     System.err.println("Error reading the file: " + e.getMessage());
                 }
             } else {
-                System.out.println("cat: " + words.get(i) + ": No such file or directory");
+                if(filePath != null && redirectNumber == 2) {
+                    try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+                        writer.write("cat: " + words.get(i) + ": No such file or directory");
+                        writer.newLine();
+                    } catch (IOException e) {
+                        System.err.println("An error occurred while writing to the file: " + e.getMessage());
+                    }
+                } else {
+                    System.out.println("cat: " + words.get(i) + ": No such file or directory");
+                }
             }
         }
     }
 
-    private static void printWorkingDir(String filePath) {
+    private static void printWorkingDir(String filePath, int redirectNumber) {
         String currentDirectory = System.getProperty("user.dir");
-        if(filePath != null) {
+        if(filePath != null && redirectNumber == 1) {
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
                 writer.write(currentDirectory);
                 writer.newLine();
@@ -162,7 +181,7 @@ public class Main {
         }
     }
 
-    private static void checkType(String word, String filePath) {
+    private static void checkType(String word, String filePath, int redirectNumber) {
         String output = null;
         String error = null;
         if(word.equalsIgnoreCase("cat")) {
@@ -177,7 +196,7 @@ public class Main {
                 error = word + ": not found";
             }
         }
-        if(filePath != null && output != null) {
+        if(filePath != null && output != null && redirectNumber == 1) {
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
                 writer.write(output);
                 writer.newLine();
@@ -187,8 +206,17 @@ public class Main {
         } else if(output != null) {
             System.out.println(output);
         }
-        if(error != null) {
-            System.out.println(error);
+        if(error != null ) {
+            if(filePath != null && redirectNumber == 2) {
+                try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+                    writer.write(error);
+                    writer.newLine();
+                } catch (IOException e) {
+                    System.err.println("An error occurred while writing to the file: " + e.getMessage());
+                }
+            } else {
+                System.out.println(error);
+            }
         }
     }
 
@@ -214,8 +242,8 @@ public class Main {
         return null;
     }
 
-    private static void printEcho(ArrayList<String> args, String filePath) {
-        if(filePath != null) {
+    private static void printEcho(ArrayList<String> args, String filePath, int redirectNumber) {
+        if(filePath != null && redirectNumber == 1) {
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
                 writer.write(String.join(" ", args).substring(4).trim());
                 writer.newLine();
@@ -227,7 +255,7 @@ public class Main {
         }
     }
 
-    private static void changeDir(String path, String filePath) {
+    private static void changeDir(String path, String filePath, int redirectNumber) {
         if(path.equals("~")) {
             System.setProperty("user.dir", System.getenv("HOME"));
         } else {
@@ -235,7 +263,16 @@ public class Main {
             if(folder != null && folder.isDirectory()) {
                 System.setProperty("user.dir", folder.getAbsolutePath());
             } else {
-                System.out.println("cd: " + path + ": No such file or directory");
+                if(filePath != null && redirectNumber == 2) {
+                    try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+                        writer.write("cd: " + path + ": No such file or directory");
+                        writer.newLine();
+                    } catch (IOException e) {
+                        System.err.println("An error occurred while writing to the file: " + e.getMessage());
+                    }
+                } else {
+                    System.out.println("cd: " + path + ": No such file or directory");
+                }
             }
         }
     }
