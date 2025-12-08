@@ -98,7 +98,7 @@ public class Main {
                 if(filePath != null) {
                     try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
                         while ((line = reader.readLine()) != null) {
-                            writer.write(line);
+                            writer.write(line + "\\n");
                         }
                     } catch (IOException e) {
                         System.err.println("An error occurred while writing to the file: " + e.getMessage());
