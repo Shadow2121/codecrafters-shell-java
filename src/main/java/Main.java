@@ -21,12 +21,20 @@ public class Main {
                 break;
             }
 
-            processCommand(input);
+            processInput(input);
         }
     }
 
-    private static void processCommand(String input) {
-        String[] words = input.split("\\s+");
+    private static void processInput(String input) {
+        String[] tokens = input.split(">|1>");
+        if(tokens.length == 2) {
+            processCommand(tokens[0].trim(), tokens[1].trim());
+        } else {
+            processCommand(input, null);
+        }
+    }
+
+    private static ArrayList<String> extractArgs(String input) {
         ArrayList<String> args = new ArrayList<>();
         boolean isSingleQuotes = false;
         boolean isDoubleQuotes = false;
@@ -54,24 +62,28 @@ public class Main {
             }
         }
 
-
         if (!curr.isEmpty()) {
             args.add(curr.toString());
         }
 
+        return args;
+    }
+
+    private static void processCommand(String input, String filePath) {
+        ArrayList<String> args = extractArgs(input);
+
         if(args.getFirst().equalsIgnoreCase("echo")) {
-            printEcho(args);
+            printEcho(args, filePath);
         } else if (args.getFirst().equalsIgnoreCase("type")) {
-            checkType(args.get(1).toLowerCase());
+            checkType(args.get(1).toLowerCase(), filePath);
         } else if (args.getFirst().equalsIgnoreCase("pwd")) {
-            printWorkingDir();
+            printWorkingDir(filePath);
         } else if (args.getFirst().equalsIgnoreCase("cd")) {
-            changeDir(args.get(1));
+            changeDir(args.get(1), filePath);
         } else if (args.getFirst().equalsIgnoreCase("cat")) {
-            openFileAndPrint(args);
+            openFileAndPrint(args, filePath);
         }
         else {
-            // System.out.println(input + ": command not found");
             try {
                 ProcessBuilder processBuilder = new ProcessBuilder(args); // For Windows
 
@@ -83,16 +95,27 @@ public class Main {
                 InputStream inputStream = process.getInputStream();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
                 String line;
-                while ((line = reader.readLine()) != null) {
-                    System.out.println(line);
+                if(filePath != null) {
+                    try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+                        while ((line = reader.readLine()) != null) {
+                            writer.write(line);
+                        }
+                    } catch (IOException e) {
+                        System.err.println("An error occurred while writing to the file: " + e.getMessage());
+                    }
+                } else {
+                    while ((line = reader.readLine()) != null) {
+                        System.out.println(line);
+                    }
                 }
+
             } catch (Exception e) {
                 System.out.println(args.getFirst() + ": not found");
             }
         }
     }
 
-    private static void openFileAndPrint(ArrayList<String> words) {
+    private static void openFileAndPrint(ArrayList<String> words, String filePath) {
         for(int i = 1; i < words.size(); i++) {
             File file = getAbsoluteFile(words.get(i));
             if(file != null && file.exists() && file.isFile()) {
@@ -100,10 +123,15 @@ public class Main {
                     // Read all content of the file into a String
                     String fileContent = Files.readString(file.getAbsoluteFile().toPath());
 
-//                    String singleLineContent = fileContent.replaceAll("[\\n\\r]", "");
-
-                    // Print the content to the console
-                    System.out.print(fileContent);
+                    if(filePath != null) {
+                        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+                            writer.write(fileContent);
+                        } catch (IOException e) {
+                            System.err.println("An error occurred while writing to the file: " + e.getMessage());
+                        }
+                    } else {
+                        System.out.print(fileContent);
+                    }
 
                 } catch (IOException e) {
                     // Handle potential IOException (e.g., file not found, permission issues)
@@ -115,23 +143,41 @@ public class Main {
         }
     }
 
-    private static void printWorkingDir() {
+    private static void printWorkingDir(String filePath) {
         String currentDirectory = System.getProperty("user.dir");
-        System.out.println(currentDirectory);
+        if(filePath != null) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+                writer.write(currentDirectory);
+            } catch (IOException e) {
+                System.err.println("An error occurred while writing to the file: " + e.getMessage());
+            }
+        } else {
+            System.out.println(currentDirectory);
+        }
     }
 
-    private static void checkType(String word) {
+    private static void checkType(String word, String filePath) {
+        String output = null;
         if(word.equalsIgnoreCase("cat")) {
-            System.out.println("cat is /bin/cat");
+            output = "cat is /bin/cat";
         } else if( Arrays.asList(validCommands).contains(word)) {
-            System.out.println(word + " is a shell builtin");
+            output = word + " is a shell builtin";
         } else {
             String path = getAbsolutePathIfValidExecutable(word);
             if (path != null) {
-                System.out.println(word + " is " + path);
+                output = word + " is " + path;
             } else {
                 System.out.println(word + ": not found");
             }
+        }
+        if(filePath != null && output != null) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+                writer.write(output);
+            } catch (IOException e) {
+                System.err.println("An error occurred while writing to the file: " + e.getMessage());
+            }
+        } else {
+            System.out.println(output);
         }
     }
 
@@ -157,49 +203,19 @@ public class Main {
         return null;
     }
 
-//    private static void printEcho(String[] words) {
-//        if (words.length == 1) {
-//            System.out.println();
-//            return;
-//        }
-//
-//        System.out.println(String.join(" ", words).substring(words[0].length()).trim());
-//    }
-
-    private static void printEcho(ArrayList<String> args) {
-        System.out.println(String.join(" ", args).substring(4).trim());
-
-//        boolean isSingleQuote = false;
-//        ArrayList<String> words = new ArrayList<>();
-//        StringBuilder  word = new StringBuilder();
-//        for(char c: line.toCharArray()) {
-//            if(isSingleQuote) {
-//                if(c == '\'') {
-//                    isSingleQuote = false;
-//                    words.add(word.toString().trim());
-//                    word.setLength(0);
-//                } else word.append(c);
-//                continue;
-//            }
-//            if(c == '\'') isSingleQuote = true;
-//            else {
-//                if (c == ' ') {
-//                    if(word.isEmpty()) continue;
-//                    words.add(word.toString().trim());
-//                    word.setLength(0);
-//                } else {
-//                    word.append(c);
-//                }
-//            }
-//        }
-//        if(!word.isEmpty()) {
-//            words.add(word.toString().trim());
-//            word.setLength(0);
-//        }
-//        System.out.println(String.join("", words));
+    private static void printEcho(ArrayList<String> args, String filePath) {
+        if(filePath != null) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+                writer.write(String.join(" ", args).substring(4).trim());
+            } catch (IOException e) {
+                System.err.println("An error occurred while writing to the file: " + e.getMessage());
+            }
+        } else {
+            System.out.println(String.join(" ", args).substring(4).trim());
+        }
     }
 
-    private static void changeDir(String path) {
+    private static void changeDir(String path, String filePath) {
         if(path.equals("~")) {
             System.setProperty("user.dir", System.getenv("HOME"));
         } else {
