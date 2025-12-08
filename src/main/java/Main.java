@@ -84,35 +84,39 @@ public class Main {
             openFileAndPrint(args, filePath);
         }
         else {
-            try {
-                ProcessBuilder processBuilder = new ProcessBuilder(args); // For Windows
+            executeAnyCommand(args, filePath);
+        }
+    }
 
-                // Redirect standard output to the Java program's console
-                processBuilder.redirectErrorStream(true);
-                Process process = processBuilder.start();
+    private static void executeAnyCommand(ArrayList<String> args, String filePath) {
+        try {
+            ProcessBuilder processBuilder = new ProcessBuilder(args); // For Windows
 
-                // Read the output of the external program
-                InputStream inputStream = process.getInputStream();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-                String line;
-                if(filePath != null) {
-                    try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
-                        while ((line = reader.readLine()) != null) {
-                            writer.write(line);
-                            writer.newLine();
-                        }
-                    } catch (IOException e) {
-                        System.err.println("An error occurred while writing to the file: " + e.getMessage());
-                    }
-                } else {
+            // Redirect standard output to the Java program's console
+            processBuilder.redirectErrorStream(true);
+            Process process = processBuilder.start();
+
+            // Read the output of the external program
+            InputStream inputStream = process.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            String line;
+            if(filePath != null) {
+                try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
                     while ((line = reader.readLine()) != null) {
-                        System.out.println(line);
+                        writer.write(line);
+                        writer.newLine();
                     }
+                } catch (IOException e) {
+                    System.err.println("An error occurred while writing to the file: " + e.getMessage());
                 }
-
-            } catch (Exception e) {
-                System.out.println(args.getFirst() + ": not found");
+            } else {
+                while ((line = reader.readLine()) != null) {
+                    System.out.println(line);
+                }
             }
+
+        } catch (Exception e) {
+            System.out.println(args.getFirst() + ": not found");
         }
     }
 
