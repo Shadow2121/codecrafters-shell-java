@@ -123,7 +123,7 @@ public class Main {
                 }
             } else {
                 while ((line = reader.readLine()) != null) {
-                    if(line.startsWith("ls: ") && filePath != null && redirectNumber == 2) {
+                    if(line.endsWith("No such file or directory") && filePath != null && redirectNumber == 2) {
                         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
                             writer.write(line);
                             writer.newLine();
