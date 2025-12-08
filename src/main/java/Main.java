@@ -28,9 +28,19 @@ public class Main {
     private static void processInput(String input) {
         String[] tokens = input.split(">");
         if(tokens[0].endsWith("1")) {
-            processCommand(tokens[0].substring(0, tokens[0].length()-1).trim(), tokens[1].trim(), 1);
+            String filePath = tokens[1].trim();
+            try {
+                File file = new File(filePath);
+                file.createNewFile();
+            } catch (IOException _) {}
+            processCommand(tokens[0].substring(0, tokens[0].length()-1).trim(), filePath, 1);
         }else if(tokens[0].endsWith("2")) {
-            processCommand(tokens[0].substring(0, tokens[0].length()-1).trim(), tokens[1].trim(), 2);
+            String filePath = tokens[1].trim();
+            try {
+                File file = new File(filePath);
+                file.createNewFile();
+            } catch (IOException _) {}
+            processCommand(tokens[0].substring(0, tokens[0].length()-1).trim(), filePath, 2);
         } else {
             processCommand(input, null, 0);
         }
@@ -113,7 +123,7 @@ public class Main {
                 }
             } else {
                 while ((line = reader.readLine()) != null) {
-                    if(line.startsWith("ls: ") && filePath != null && redirectNumber == 2 ) {
+                    if(line.startsWith("ls: ") && filePath != null && redirectNumber == 2) {
                         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
                             writer.write(line);
                             writer.newLine();
