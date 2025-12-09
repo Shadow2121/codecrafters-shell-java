@@ -29,7 +29,8 @@ public class Main {
     }
 
     private static void processInput(String input) {
-        String[] tokens = input.split(" >");
+        String[] tokens = input.split(">", 2);
+        //tokens[0] = tokens[0].substring(0, tokens[0].length() - 1);
         boolean append = false;
         if(tokens.length == 2 && tokens[0].endsWith("2")) {
             if(tokens[1].startsWith(">")) {
