@@ -27,20 +27,20 @@ public class Main {
 
     private static void processInput(String input) {
         String[] tokens = input.split(">");
-        if(tokens[0].endsWith("1")) {
-            String filePath = tokens[1].trim();
-            try {
-                File file = new File(filePath);
-                file.createNewFile();
-            } catch (IOException _) {}
-            processCommand(tokens[0].substring(0, tokens[0].length()-1).trim(), filePath, 1);
-        }else if(tokens[0].endsWith("2")) {
+        if(tokens[0].endsWith("2")) {
             String filePath = tokens[1].trim();
             try {
                 File file = new File(filePath);
                 file.createNewFile();
             } catch (IOException _) {}
             processCommand(tokens[0].substring(0, tokens[0].length()-1).trim(), filePath, 2);
+        } else if(tokens[0].endsWith("1") || tokens.length == 2) {
+            String filePath = tokens[1].trim();
+            try {
+                File file = new File(filePath);
+                file.createNewFile();
+            } catch (IOException _) {}
+            processCommand(tokens[0].substring(0, tokens[0].length()-1).trim(), filePath, 1);
         } else {
             processCommand(input, null, 0);
         }
