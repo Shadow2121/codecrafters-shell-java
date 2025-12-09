@@ -123,7 +123,16 @@ public class Main {
                 }
             } else {
                 while ((line = reader.readLine()) != null) {
-                    System.out.println(line);
+                    if(line.endsWith("No such file or directory") && filePath != null && redirectNumber == 2) {
+                        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+                            writer.write(line);
+                            writer.newLine();
+                        } catch (IOException e) {
+                            System.err.println("An error occurred while writing to the file: " + e.getMessage());
+                        }
+                    } else {
+                        System.out.println(line);
+                    }
                 }
             }
         } catch (Exception _) {
