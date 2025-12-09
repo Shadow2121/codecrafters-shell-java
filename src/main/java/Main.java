@@ -34,7 +34,7 @@ public class Main {
                 file.createNewFile();
             } catch (IOException _) {}
             processCommand(tokens[0].substring(0, tokens[0].length()-1).trim(), filePath, 2);
-        } else if(tokens.length == 2 && tokens[0].endsWith("1") ) {
+        } else if(tokens.length == 2) {
             String filePath = tokens[1].trim();
             try {
                 File file = new File(filePath);
