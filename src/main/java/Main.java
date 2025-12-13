@@ -217,6 +217,7 @@ public class Main {
 
                 } catch (IOException e) {
                     // Handle potential IOException (e.g., file not found, permission issues)
+                    
                     System.err.println("Error reading the file: " + e.getMessage());
                 }
             } else {
