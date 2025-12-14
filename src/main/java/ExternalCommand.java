@@ -35,7 +35,7 @@ public class ExternalCommand implements Command {
             // 2. Prepare the Process
             // Update the first arg to be the full path (e.g., "ls" -> "/bin/ls")
             String[] processArgs = args.clone();
-            processArgs[0] = executablePath;
+//            processArgs[0] = executablePath;
 
             ProcessBuilder pb = new ProcessBuilder(processArgs);
 
