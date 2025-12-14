@@ -9,7 +9,7 @@ public class CommandRegistry {
         register(new ExitCommand()); // Assuming you have this from before
         register(new PwdCommand());
         register(new CdCommand());
-        register(new CatCommand());
+//        register(new CatCommand());
         register(new TypeCommand(this)); // Pass registry to Type
     }
 
