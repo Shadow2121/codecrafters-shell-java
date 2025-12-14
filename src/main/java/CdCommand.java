@@ -15,7 +15,7 @@ public class CdCommand implements Command {
 
         // 1. Handle Home Directory (~)
         if (path.equals("~")) {
-            newDir = new File(System.getProperty("user.home"));
+            newDir = new File(System.getenv("HOME"));
         }
         // 2. Handle Absolute Path (Starts with /)
         else if (path.startsWith("/")) {
