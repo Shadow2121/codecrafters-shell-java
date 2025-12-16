@@ -14,7 +14,7 @@ import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 
 public class Main {
-    public static char[] SPECIAL_CHARS = {'"', '\\'};
+    public static char[] SPECIAL_CHARS = {'"', '\\', '\''};
 
     // 1. Initialize the Registry (The Factory)
     private static final CommandRegistry registry = new CommandRegistry();
