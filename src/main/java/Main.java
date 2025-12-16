@@ -24,7 +24,7 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
         // Create a simple completer with fixed options
-        Completer completer = new StringsCompleter("help", "exit", "list", "version");
+        Completer completer = new StringsCompleter("echo", "exit");
 
         // Create a line reader with the completer
         Terminal terminal = TerminalBuilder.builder().build();
