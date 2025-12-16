@@ -20,16 +20,16 @@ public class ExternalCommand implements Command {
         // 1. Resolve Path (Preserving your logic to check if it exists first)
         // If we don't find it manually, we can try letting ProcessBuilder fail,
         // but your requirements seem to want specific "not found" handling.
-        String executablePath = resolvePath(commandName);
+//        String executablePath = resolvePath(commandName);
 
-        if (executablePath == null) {
-            // Write to the ERROR stream provided by Main
-            // If the user did "2> err.txt", this automatically goes there!
-            PrintWriter errWriter = new PrintWriter(err);
-            errWriter.println(commandName + ": not found");
-            errWriter.flush();
-            return;
-        }
+//        if (executablePath == null) {
+//            // Write to the ERROR stream provided by Main
+//            // If the user did "2> err.txt", this automatically goes there!
+//            PrintWriter errWriter = new PrintWriter(err);
+//            errWriter.println(commandName + ": not found");
+//            errWriter.flush();
+//            return;
+//        }
 
         try {
             // 2. Prepare the Process

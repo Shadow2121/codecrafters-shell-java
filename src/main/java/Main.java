@@ -1,11 +1,4 @@
 
-import org.jline.reader.Completer;
-import org.jline.reader.LineReader;
-import org.jline.reader.LineReaderBuilder;
-import org.jline.reader.impl.completer.StringsCompleter;
-import org.jline.terminal.Terminal;
-import org.jline.terminal.TerminalBuilder;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -13,6 +6,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.*;
+import org.jline.reader.Completer;
+import org.jline.reader.LineReader;
+import org.jline.reader.LineReaderBuilder;
+import org.jline.reader.impl.completer.StringsCompleter;
+import org.jline.terminal.Terminal;
+import org.jline.terminal.TerminalBuilder;
 
 public class Main {
     public static char[] SPECIAL_CHARS = {'"', '\\'};
@@ -23,8 +22,7 @@ public class Main {
     private static final ShellContext context = new ShellContext();
 
     public static void main(String[] args) throws Exception {
-        // Create a simple completer with fixed options
-        Completer completer = new StringsCompleter("echo", "exit");
+        Completer completer = new StringsCompleter("echo", "exit", "list", "version");
 
         // Create a line reader with the completer
         Terminal terminal = TerminalBuilder.builder().build();
@@ -33,19 +31,27 @@ public class Main {
                 .completer(completer)
                 .build();
 
-//        Scanner scanner = new Scanner(System.in);
-
         while (!context.shouldExit()) {
-            String line = reader.readLine("$ ");
+            String input = reader.readLine("$ ");
 
-            // Handle Ctrl+D (EOF) gracefully
-//            if (!scanner.hasNextLine()) break;
+            if (input.trim().isEmpty()) continue;
 
-
-            if (line.trim().isEmpty()) continue;
-
-            handleInput(line);
+            handleInput(input);
         }
+
+//        Scanner scanner = new Scanner(System.in);
+//
+//        while (!context.shouldExit()) {
+//            System.out.print("$ ");
+//
+//            // Handle Ctrl+D (EOF) gracefully
+//            if (!scanner.hasNextLine()) break;
+//
+//            String input = scanner.nextLine();
+//            if (input.trim().isEmpty()) continue;
+//
+//            handleInput(input);
+//        }
     }
 
     private static void handleInput(String input) {
