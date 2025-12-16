@@ -6,26 +6,32 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
+import org.jline.reader.Completer;
+import org.jline.reader.LineReader;
+import org.jline.reader.LineReaderBuilder;
+import org.jline.reader.impl.completer.StringsCompleter;
+import org.jline.terminal.Terminal;
+import org.jline.terminal.TerminalBuilder;
 
 public class Main_og {
     public static String[] validCommands = {"type", "exit", "echo", "pwd", "cat"};
     public static char[] SPECIAL_CHARS = {'"', '\\'};
 
     public static void main(String[] args) throws Exception {
-        // Uncomment this block to pass the first stage
+            // Create a simple completer with fixed options
+            Completer completer = new StringsCompleter("help", "exit", "list", "version");
 
-        Scanner scanner = new Scanner(System.in);
-        while(true) {
+            // Create a line reader with the completer
+            Terminal terminal = TerminalBuilder.builder().build();
+            LineReader reader = LineReaderBuilder.builder()
+                    .terminal(terminal)
+                    .completer(completer)
+                    .build();
 
-            System.out.print("$ ");
-            String input = scanner.nextLine();
-
-            if(input.equalsIgnoreCase("exit")) {
-                break;
-            }
-
-            processInput(input);
-        }
+            System.out.println("Type a command and press Tab to see completions");
+            // Now when the user presses Tab, they'll see the available commands
+            String line = reader.readLine("prompt> ");
+            System.out.println("You entered: " + line);
     }
 
     private static void processInput(String input) {

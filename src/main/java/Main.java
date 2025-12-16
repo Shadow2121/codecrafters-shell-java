@@ -1,4 +1,11 @@
 
+import org.jline.reader.Completer;
+import org.jline.reader.LineReader;
+import org.jline.reader.LineReaderBuilder;
+import org.jline.reader.impl.completer.StringsCompleter;
+import org.jline.terminal.Terminal;
+import org.jline.terminal.TerminalBuilder;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -16,18 +23,28 @@ public class Main {
     private static final ShellContext context = new ShellContext();
 
     public static void main(String[] args) throws Exception {
-        Scanner scanner = new Scanner(System.in);
+        // Create a simple completer with fixed options
+        Completer completer = new StringsCompleter("help", "exit", "list", "version");
+
+        // Create a line reader with the completer
+        Terminal terminal = TerminalBuilder.builder().build();
+        LineReader reader = LineReaderBuilder.builder()
+                .terminal(terminal)
+                .completer(completer)
+                .build();
+
+//        Scanner scanner = new Scanner(System.in);
 
         while (!context.shouldExit()) {
-            System.out.print("$ ");
+            String line = reader.readLine("$ ");
 
             // Handle Ctrl+D (EOF) gracefully
-            if (!scanner.hasNextLine()) break;
+//            if (!scanner.hasNextLine()) break;
 
-            String input = scanner.nextLine();
-            if (input.trim().isEmpty()) continue;
 
-            handleInput(input);
+            if (line.trim().isEmpty()) continue;
+
+            handleInput(line);
         }
     }
 
