@@ -35,6 +35,7 @@ public class Main {
             String input = reader.readLine("$ ");
 
             if (input.trim().isEmpty()) continue;
+            System.out.println(input);
 
             handleInput(input);
         }
@@ -129,15 +130,7 @@ public class Main {
         StringBuilder curr = new StringBuilder();
 
         for (char ch : input.toCharArray()) {
-            if(ch == '\\' && !isSingleQuotes && !isBackSlash) {
-                isBackSlash = true;
-            } else if(isBackSlash) {
-                if(isDoubleQuotes && Arrays.binarySearch(SPECIAL_CHARS, ch) < 0) {
-                    curr.append("\\");
-                }
-                isBackSlash = false;
-                curr.append(ch);
-            }else if(ch == '"' && !isSingleQuotes) {
+            if(ch == '"' && !isSingleQuotes) {
                 isDoubleQuotes = !isDoubleQuotes;
             } else if (ch == '\'' && !isDoubleQuotes) {
                 isSingleQuotes = !isSingleQuotes;
